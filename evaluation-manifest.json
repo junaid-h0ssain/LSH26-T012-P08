@@ -41,6 +41,15 @@
         "src/routes/index.tsx",
         "convex/schema.ts"
       ]
+    },
+    {
+      "registered_name": "Punam Chakraborty",
+      "github_username": "punammomi",
+      "major_contribution": "Brief description of personal contribution",
+      "evidence_paths_or_commits": [
+        "src/example-file",
+        "<commit SHA if helpful>"
+      ]
     }
   ],
   "major_design_decisions": [

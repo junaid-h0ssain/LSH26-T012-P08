@@ -145,7 +145,7 @@ function SchoolGpaDashboard() {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" asChild>
-              <label className="cursor-pointer">
+              <label className="cursor-pointer inline-flex items-center justify-center gap-1.5">
                 <Upload className="size-3.5" /> Upload JSON
                 <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
               </label>

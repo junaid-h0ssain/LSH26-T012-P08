@@ -9,50 +9,53 @@
   "pre_event_materials": [],
   "sample_data": {
     "loads_published_fixture": true,
-    "method": "file upload",
-    "reset_instructions": "Explain how judges can restore the initial data."
+    "method": "file upload and bundled default dataset",
+    "reset_instructions": "Click the 'Reset Default' button in the top navigation bar or upload the JSON fixture P08_school_results_public.json directly via the 'Upload JSON' button."
   },
-  "problem_solving_method": "Briefly explain the approach and why the team chose it.",
+  "problem_solving_method": "Deterministic GPA rule engine with per-student trace logs and office checking lists, built using React, TanStack Start, and Convex for state persistence and real-time reactive sync.",
   "requirements": {
     "R1": {
       "status": "complete",
-      "evidence": "Page, route, feature or source-file path"
+      "evidence": "src/lib/gpaEngine.ts, src/lib/defaultDataset.json, src/routes/index.tsx (Class 9 & 10 with 80 students and hard edges: high avg fail, practical fail with passing theory, optional <= 2.0, absent)"
     },
     "R2": {
       "status": "complete",
-      "evidence": "Page, route, feature or source-file path"
+      "evidence": "src/lib/gpaEngine.ts (evaluateStudent, evaluateCase, getGradePointAndLetter, getLetterFromGpa implementing R-10, R-11, R-12, R-13)"
     },
     "R3": {
-      "status": "partial",
-      "evidence": "Explain what works and what remains"
+      "status": "complete",
+      "evidence": "src/routes/index.tsx Tab 3 (Per-student trace displaying raw marks, theory/practical breakdown, grade point, governing rule applied, step-by-step GPA formula resolution, and highlighted failure reasons for uncancelled high average failures)"
     },
     "R4": {
-      "status": "not_attempted",
-      "evidence": "Not attempted"
+      "status": "complete",
+      "evidence": "src/routes/index.tsx Tab 4 (Office Pre-Publication Checking List categorized by optional rule affected <= 2.0, practical part fail < 8, and absent marks AB per R-29)"
     }
   },
   "team_members": [
     {
       "registered_name": "Junaid Hossain",
       "github_username": "junaid-h0ssa",
-      "major_contribution": "Brief description of personal contribution",
+      "major_contribution": "Designed and implemented the GPA Engine, interactive calculation trace viewer, office checking list, and TanStack Start UI",
       "evidence_paths_or_commits": [
-        "src/example-file",
-        "<commit SHA if helpful>"
+        "src/lib/gpaEngine.ts",
+        "src/routes/index.tsx",
+        "convex/schema.ts"
       ]
     }
   ],
   "major_design_decisions": [
-    "Decision and short reason"
+    "Clean separation of GPA engine domain logic in src/lib/gpaEngine.ts for 100% testability and compliance with board rules",
+    "Comprehensive trace data structure that captures mark breakdown, reason codes, and step-by-step arithmetic resolution",
+    "Interactive filtering and sorting across all classes, letter grades, and office verification categories"
   ],
   "known_limitations": [
-    "Known limitation or unfinished behaviour"
+    "None"
   ],
   "ai_tools_used": [
     {
-      "tool": "<TOOL NAME>",
-      "used_for": "What the tool helped with",
-      "how_output_was_verified": "How the team checked the result"
+      "tool": "Antigravity",
+      "used_for": "Code generation, architecture, rule verification against public test fixture, and UI design",
+      "how_output_was_verified": "Verified against all 25 test cases in P08_school_results_public.json and validated rule by rule (R-10, R-11, R-12, R-13, R-29)."
     }
   ],
   "licenses_file": "LICENSES.md",

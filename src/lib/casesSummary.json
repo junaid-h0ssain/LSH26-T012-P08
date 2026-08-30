@@ -1,0 +1,202 @@
+[
+  {
+    "case_id": "PUB-01",
+    "student_count": 80,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-02",
+    "student_count": 60,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-03",
+    "student_count": 61,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-04",
+    "student_count": 78,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-05",
+    "student_count": 64,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-06",
+    "student_count": 62,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-07",
+    "student_count": 69,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-08",
+    "student_count": 74,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-09",
+    "student_count": 67,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-10",
+    "student_count": 76,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-11",
+    "student_count": 79,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-12",
+    "student_count": 80,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-13",
+    "student_count": 68,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-14",
+    "student_count": 69,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-15",
+    "student_count": 62,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-16",
+    "student_count": 70,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-17",
+    "student_count": 61,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-18",
+    "student_count": 75,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-19",
+    "student_count": 69,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-20",
+    "student_count": 80,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-21",
+    "student_count": 75,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-22",
+    "student_count": 79,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-23",
+    "student_count": 70,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-24",
+    "student_count": 63,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  },
+  {
+    "case_id": "PUB-25",
+    "student_count": 74,
+    "classes": [
+      "Class 10",
+      "Class 9"
+    ]
+  }
+]

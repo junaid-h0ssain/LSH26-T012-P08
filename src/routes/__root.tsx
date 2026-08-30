@@ -3,8 +3,20 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import ConvexProvider from '../integrations/convex/provider'
+import { ThemeProvider } from '../components/theme-provider'
 
 import appCss from '../styles.css?url'
+
+const themeScript = `(() => {
+  try {
+    const stored = localStorage.getItem('gpa-theme');
+    const theme = stored || 'system';
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const resolved = theme === 'system' ? (systemDark ? 'dark' : 'light') : theme;
+    if (resolved === 'dark') document.documentElement.classList.add('dark');
+    document.documentElement.style.colorScheme = resolved;
+  } catch {}
+})();`
 
 export const Route = createRootRoute({
   head: () => ({
@@ -32,25 +44,28 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <ConvexProvider>
-          {children}
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-            ]}
-          />
-        </ConvexProvider>
+        <ThemeProvider>
+          <ConvexProvider>
+            {children}
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+              ]}
+            />
+          </ConvexProvider>
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>

@@ -129,7 +129,7 @@ function SchoolGpaDashboard() {
   return (
     <div className="min-h-screen bg-muted/30 pb-12">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+      <header className="sticky top-0 z-30 border-b bg-card/80 backdrop-blur supports-backdrop-filter:bg-card/80">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
@@ -186,6 +186,65 @@ function SchoolGpaDashboard() {
           </Card>
         </div>
 
+        {/* Grade Scale (R-10) */}
+        <Card className="overflow-hidden py-0 gap-0">
+          <CardHeader className="bg-muted/30 border-b py-3">
+            <div className="flex items-center gap-2">
+              <Award className="size-4 text-primary" />
+              <CardTitle className="text-sm">Letter Grade Scale — Final GPA (R-10)</CardTitle>
+              <CardDescription className="hidden sm:inline">A+ = 5.00 · capped at 5.00 · 2 decimal places</CardDescription>
+            </div>
+          </CardHeader>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="w-28">Letter Grade</TableHead>
+                  <TableHead>Final GPA Range</TableHead>
+                  <TableHead>Remarks</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell><Badge variant="default">A+</Badge></TableCell>
+                  <TableCell className="font-mono text-xs font-medium">5.00</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">Perfect — capped at 5.00</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell><Badge variant="secondary">A</Badge></TableCell>
+                  <TableCell className="font-mono text-xs">4.00 – 4.99</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">Excellent</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell><Badge variant="secondary">A-</Badge></TableCell>
+                  <TableCell className="font-mono text-xs">3.50 – 3.99</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">Very Good</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell><Badge variant="outline">B</Badge></TableCell>
+                  <TableCell className="font-mono text-xs">3.00 – 3.49</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">Good</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell><Badge variant="outline">C</Badge></TableCell>
+                  <TableCell className="font-mono text-xs">2.00 – 2.99</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">Average</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell><Badge variant="outline">D</Badge></TableCell>
+                  <TableCell className="font-mono text-xs">1.00 – 1.99</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">Pass</TableCell>
+                </TableRow>
+                <TableRow className="bg-destructive/5">
+                  <TableCell><Badge variant="destructive">F</Badge></TableCell>
+                  <TableCell className="font-mono text-xs">0.00 – 0.99 · or any compulsory fail → 0.00</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">Fail (R-13: compulsory failure overrides GPA)</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList variant="line" className="w-full justify-start overflow-x-auto">
@@ -206,11 +265,11 @@ function SchoolGpaDashboard() {
                   </div>
                   <div className="flex gap-2">
                     <Select value={classFilter} onValueChange={setClassFilter}>
-                      <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="w-37.5"><SelectValue /></SelectTrigger>
                       <SelectContent>{['ALL', ...classes].map(c => <SelectItem key={c} value={c}>{c === 'ALL' ? 'All Classes' : c}</SelectItem>)}</SelectContent>
                     </Select>
                     <Select value={gradeFilter} onValueChange={setGradeFilter}>
-                      <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="w-45"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ALL">All Grades</SelectItem>
                         <SelectItem value="PASS">Passing only</SelectItem>
@@ -291,7 +350,7 @@ function SchoolGpaDashboard() {
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground hidden sm:inline">Switch:</span>
                       <Select value={activeStudentResult.id} onValueChange={setSelectedStudentId}>
-                        <SelectTrigger className="w-[260px]"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-65"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {results.map(s => <SelectItem key={s.id} value={s.id}>{s.id} — {s.name} ({s.finalGrade})</SelectItem>)}
                         </SelectContent>
@@ -338,7 +397,7 @@ function SchoolGpaDashboard() {
                           <TableCell className="font-mono text-xs">{t.totalMark === 'AB' ? <span className="text-destructive font-bold">AB</span> : <span className={!t.passed ? 'text-destructive font-bold' : ''}>{String(t.totalMark)}</span>}</TableCell>
                           <TableCell className="font-mono font-semibold text-xs">{t.gradePoint.toFixed(2)}</TableCell>
                           <TableCell><Badge variant={t.letterGrade === 'F' ? 'destructive' : 'outline'} className="text-[11px]">{t.letterGrade}</Badge></TableCell>
-                          <TableCell className="max-w-[360px] whitespace-normal text-xs text-muted-foreground leading-relaxed">{t.ruleApplied}</TableCell>
+                          <TableCell className="max-w-90 whitespace-normal text-xs text-muted-foreground leading-relaxed">{t.ruleApplied}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

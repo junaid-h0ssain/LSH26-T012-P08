@@ -2,7 +2,7 @@
   "team_id": "LSH26-T012",
   "problem_id": "P08",
   "repository_name": "lsh26-t012-p08",
-  "live_url": "https://example.com",
+  "live_url": "https://results-navy.vercel.app/",
   "demo_video_url_optional": "",
   "event_start_code": "LSH26-8490-C900",
   "repository_created_before_release": false,
@@ -10,25 +10,45 @@
   "sample_data": {
     "loads_published_fixture": true,
     "method": "file upload and bundled default dataset",
-    "reset_instructions": "Click the 'Reset Default' button in the top navigation bar or upload the JSON fixture P08_school_results_public.json directly via the 'Upload JSON' button."
+    "reset_instructions": "Click the 'Reset' button in the top navigation bar or upload the JSON fixture P08_school_results_public.json directly via the 'Upload JSON' button."
   },
-  "problem_solving_method": "Deterministic GPA rule engine with per-student trace logs and office checking lists, built using React and TanStack Start with fully client-side evaluation (no backend).",
+  "problem_solving_method": "Pure client-side deterministic GPA engine: src/lib/gpaEngine.ts implements R-10/R-11/R-12/R-13/R-29 exactly; React + TanStack Start renders results, per-student trace, and office checking lists; data from src/lib/defaultDataset.json and optional JSON upload.",
   "requirements": {
-    "R1": {
+    "R1_dataset_and_hard_edges": {
       "status": "complete",
-      "evidence": "src/lib/gpaEngine.ts, src/lib/defaultDataset.json, src/routes/index.tsx (Class 9 & 10 with 80 students and hard edges: high avg fail, practical fail with passing theory, optional <= 2.0, absent)"
+      "evidence": "AGENTS.md:5 item 1 — src/lib/defaultDataset.json:3-50 (9 subjects) + src/lib/defaultDataset.json:58-2120 (80 students 40+40) + src/routes/index.tsx:425-477 hard-edge panels: 5 high-avg fail, 10 practical fail (S011 PHY Th60/Pr5), 25 optional ≤2.0, 2 absent (S032/S045)"
     },
-    "R2": {
+    "R2_grade_points_GPA_letter": {
       "status": "complete",
-      "evidence": "src/lib/gpaEngine.ts (evaluateStudent, evaluateCase, getGradePointAndLetter, getLetterFromGpa implementing R-10, R-11, R-12, R-13)"
+      "evidence": "AGENTS.md:7 item 2 — src/lib/gpaEngine.ts:75-83 + src/lib/gpaEngine.ts:95-103 + src/lib/gpaEngine.ts:105-502 evaluateStudent produces per-subject GP, final GPA and letter; shown src/routes/index.tsx:231-271"
     },
-    "R3": {
+    "R3_per_student_trace": {
       "status": "complete",
-      "evidence": "src/routes/index.tsx Tab 3 (Per-student trace displaying raw marks, theory/practical breakdown, grade point, governing rule applied, step-by-step GPA formula resolution, and highlighted failure reasons for uncancelled high average failures)"
+      "evidence": "AGENTS.md:9 item 3 — src/routes/index.tsx:274-376 Trace table (mark/GP/rule) + src/routes/index.tsx:303-316 high-avg fail shows causing subject + uncancelledGpa + src/lib/gpaEngine.ts:31 ruleApplied"
     },
-    "R4": {
+    "R4_checking_lists": {
       "status": "complete",
-      "evidence": "src/routes/index.tsx Tab 4 (Office Pre-Publication Checking List categorized by optional rule affected <= 2.0, practical part fail < 8, and absent marks AB per R-29)"
+      "evidence": "AGENTS.md:11 item 4 — src/routes/index.tsx:380-422 Office tabs All/Optional≤2.0/Practical/Absent derived from src/lib/gpaEngine.ts:489-492"
+    },
+    "R-10_letter_grade": {
+      "status": "complete",
+      "evidence": "src/lib/gpaEngine.ts:95-103 getLetterFromGpa implements AGENTS.md:18 exactly: A+ =5.00, A 4.00-4.99, A- 3.50-3.99, B 3.00-3.49, C 2.00-2.99, D 1.00-1.99, F fail"
+    },
+    "R-11_practical_theory_pass": {
+      "status": "complete",
+      "evidence": "src/lib/gpaEngine.ts:153-278 practical subjects: Theory 25/75 and Practical 8/25 checked separately; any fail → GP 0.0; ruleApplied strings cite (R-11) e.g. S011 PHY Th60 pass Pr5 fail → Practical fail"
+    },
+    "R-12_absent": {
+      "status": "complete",
+      "evidence": "src/lib/gpaEngine.ts:130-146 compulsory AB → GP 0, hasCompulsoryFail=true, overall F + src/lib/gpaEngine.ts:332-348 optional AB → contributes 0, hasAbsentFlag=true, flagged on checking list per AGENTS.md:15"
+    },
+    "R-13_GPA_formula_and_compulsory_fail": {
+      "status": "complete",
+      "evidence": "src/lib/gpaEngine.ts:452-469 GPA=(sumCompulsory + max(0,optGP-2))/6 capped 5.00 shown 2dp + compulsory fail → finalGpa 0.00 F with uncancelledGpa visible visible ( (/lib/gpaEngine.ts:436 transition) + src/routes/index.tsx:260-262 strikethrough uncancelled + src/routes/index.tsx:350-362 GPA resolution trace"
+    },
+    "R-29_checking_list_definitions": {
+      "status": "complete",
+      "evidence": "src/lib/gpaEngine.ts:489-492 flags: optionalRuleAffected optGP≤2.0 (absent counts), practicalFail pr<8 any subject, absent any AB; student can be on >1 list + src/routes/index.tsx:70-76 + 388-394 tab counts per AGENTS.md:19"
     }
   },
   "team_members": [
@@ -53,18 +73,16 @@
     }
   ],
   "major_design_decisions": [
-    "Clean separation of GPA engine domain logic in src/lib/gpaEngine.ts for 100% testability and compliance with board rules",
-    "Comprehensive trace data structure that captures mark breakdown, reason codes, and step-by-step arithmetic resolution",
-    "Interactive filtering and sorting across all classes, letter grades, and office verification categories"
+    "Engine isolated in src/lib/gpaEngine.ts (evaluateStudent/evaluateCase pure functions) for 100% testability and exact board-rule compliance (R-10/R-11/R-12/R-13/R-29)",
+    "Trace data structure captures mark used, grade point, governing rule (R-*) and failureReason plus uncancelledGpa for high-average failures",
+    "Fully client-side (no backend) with file upload for P08_school_results_public.json and bundled 80-student default dataset covering all 4 hard-edge categories"
   ],
-  "known_limitations": [
-    "None"
-  ],
+  "known_limitations": ["None"],
   "ai_tools_used": [
     {
-      "tool": "Antigravity",
+      "tool": "Antigravity CLI, Opencode",
       "used_for": "Code generation, architecture, rule verification against public test fixture, and UI design",
-      "how_output_was_verified": "Verified against all 25 test cases in P08_school_results_public.json and validated rule by rule (R-10, R-11, R-12, R-13, R-29)."
+      "how_output_was_verified": "Verified via npx tsx against P08_school_results_public.json and defaultDataset.json (80 students, 5 high-avg fails, 10 practical fails) and rule-by-rule manual check of R-10, R-11, R-12, R-13, R-29."
     }
   ],
   "licenses_file": "LICENSES.md",

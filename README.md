@@ -1,214 +1,102 @@
-Welcome to your new TanStack Start app!
+# LSH26-T012-P08 — School Result Processing and GPA Engine
 
-# Getting Started
+| Field | Value |
+|---|---|
+| **Team ID** | `LSH26-T012` |
+| **Problem ID** | `P08` |
+| **Live URL** | https://results-navy.vercel.app/ |
+| **Event Code** | `LSH26-8490-C900` |
+| **Repo** | `lsh26-t012-p08` |
 
-To run this application:
+Deterministic, fully client-side GPA engine that implements the board rules exactly (R-10 / R-11 / R-12 / R-13 / R-29), with per-student trace and office checking lists.
 
-```bash
-bun install
-bun --bun run dev
-```
+---
 
-# Building For Production
+## Setup and Run
 
-To build this application for production:
-
-```bash
-bun --bun run build
-```
-
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
+**Prerequisites:** Node 20+ or Bun 1.1+, no env vars required (Convex removed — pure client-side).
 
 ```bash
-bun --bun run lint
-bun --bun run format
-bun --bun run check
+# 1. Install
+bun install        # or: npm install
+
+# 2. Dev server (http://localhost:3000)
+bun run dev        # or: npm run dev
+
+# 3. Production build + preview
+bun run build
+bun run preview    # or: npm run preview
+# Nitro output: node .output/server/index.mjs
+
+# 4. Lint / format
+bun run check      # biome check
+bun run lint
+bun run format
 ```
 
+**Load data:**
 
-## Deploy with Nitro
+- Bundled default: `src/lib/defaultDataset.json` (80 students) loads automatically.
+- Published fixture: click **Upload JSON** → select `P08_school_results_public.json` (any `cases[0]` or bare `CaseData` shape works).
+- Reset: click **Reset** in header.
 
-This project uses Nitro as a generic server adapter, so it can run on any Node-compatible host.
+---
 
-```bash
-npm run build
-node dist/server/index.mjs
+## Proof Each Requirement Is Met
+
+### The four required items (AGENTS.md:5-11)
+
+| # | Requirement (AGENTS.md) | Status | Evidence |
+|---|---|---|---|
+| **1** | **≥60 students across 2 classes, 6 compulsory + 1 optional, practical splits, ≥8 hard-edge students** (failed with strong avg, practical fail with passing theory, optional ≤2.0, absent) | ✅ | `src/lib/defaultDataset.json:3-50` — 9 subjects (BAN/ENG/MAT non-practical, PHY/CHE/BIO/HMT/AGR practical, REL non-practical), compulsory `[BAN,ENG,MAT,PHY,CHE,BIO]`. `src/lib/defaultDataset.json:58-2120` — **80 students** (40 Class 9 + 40 Class 10), each 7 marks. Hard edges verified via `src/lib/gpaEngine.ts:489-493`: High-avg fail 5 (`S004 4.67`, `S005 4.67`, `S011 3.83`, `S064 3.08`, `S070 3.25`), Practical fail 10 (`S002,S010,S011,S012…`), Optional ≤2.0 25 students, Absent 2 (`S032 BIO AB`, `S045 REL AB`). Shown in `src/routes/index.tsx:425-477` Hard Edges tab. |
+| **2** | **Grade point per subject, final GPA and letter grade per student** | ✅ | `src/lib/gpaEngine.ts:75-83` `getGradePointAndLetter`, `src/lib/gpaEngine.ts:95-103` `getLetterFromGpa` (R-10), `src/lib/gpaEngine.ts:105-502` `evaluateStudent`/`evaluateCase` — produces `subjectTraces[].gradePoint`, `finalGpa`, `finalGrade` for every student. Rendered in Results table `src/routes/index.tsx:231-271`. |
+| **3** | **Per-student trace: mark used, grade point, governing rule; high-avg failure must show causing subject** | ✅ | `src/routes/index.tsx:274-376` Trace tab: columns Subject/Type/Marks/Total/GP/Grade/Rule (`SubjectTrace.ruleApplied:31` cites `R-11`/`R-12`). Failure banner `src/routes/index.tsx:303-316` lists `failedCompulsorySubjects` + strikethrough `uncancelledGpa:260-262` + step-by-step GPA resolution `src/routes/index.tsx:348-374` showing `sumComp + max(0,opt-2) /6`. |
+| **4** | **Office checking list: every student affected by optional rule, practical fail, or absent** | ✅ | `src/routes/index.tsx:380-422` Checking Lists tab with sub-tabs All / Optional ≤2.0 / Practical fail / Absent. Derived from `src/lib/gpaEngine.ts:489-492` flags. Handles overlapping lists (R-29). `src/routes/index.tsx:70-76` counts. |
+
+### Clarifications — judges mark by these (AGENTS.md:12-19)
+
+| Rule | Description | Evidence |
+|---|---|---|
+| **R-11** | Theory 75 pass 25, Practical 25 pass 8; failing either → GP 0 | `src/lib/gpaEngine.ts:153-278` — separate `th<25` / `pr<8` branches; e.g. `S011` PHY `Th60/75 pass + Pr5/25 fail → GP 0 (R-11)` at `src/lib/gpaEngine.ts:210-233` |
+| **R-12** | Absent compulsory: `AB`, GP 0, overall `F`. Absent optional: contributes `0`, appears on checking list | `src/lib/gpaEngine.ts:130-146` compulsory AB, `src/lib/gpaEngine.ts:332-348` optional AB → `hasAbsentFlag` |
+| **R-13** | GPA = `(sum compulsory GP + max(0, optGP-2))/6` capped `5.00` 2dp; any compulsory fail → `0.00 F`, uncancelled visible | `src/lib/gpaEngine.ts:452-469` + `src/routes/index.tsx:350-373` resolution trace; high-avg fails show `uncancelledGpa` before override |
+| **R-10** | Letter from final GPA: `A+=5.00, A 4.00-4.99, A- 3.50-3.99, B 3.00-3.49, C 2.00-2.99, D 1.00-1.99, F fail` | `src/lib/gpaEngine.ts:95-103` |
+| **R-29** | Checking lists: optional `GP≤2.0` (AB counts), practical `pr<8` any subject, absent `AB` any subject; student can be on multiple | `src/lib/gpaEngine.ts:489-492` + `src/routes/index.tsx:388-394` |
+
+All rules verified against `P08_school_results_public.json` via `npx tsx` (80 default + public fixture, `S005` theory fail, `S011` practical fail, `S032`/`S045` absent, `S004` `32/100→F` edge).
+
+---
+
+## Major Decisions
+
+1. **Engine isolated in `src/lib/gpaEngine.ts`** — pure functions `evaluateStudent`/`evaluateCase`/`getGradePointAndLetter`/`getLetterFromGpa` with no side effects, 100% testable and board-rule compliant. UI never computes GPA itself.
+2. **Rich trace structure** — `SubjectTrace` captures `theoryMark/practicalMark/totalMark`, `gradePoint`, `letterGrade`, `failureReason` (`ABSENT`/`THEORY_FAIL`/`PRACTICAL_FAIL`/`TOTAL_FAIL`) and `ruleApplied` string citing `R-*`, plus `uncancelledGpa`/`failedCompulsorySubjects` for high-average failures.
+3. **Fully client-side (Convex removed)** — no backend/DB; data is `src/lib/defaultDataset.json` + JSON upload parsed in `src/routes/index.tsx:90-110`. Keeps deployment to static Vercel possible and matches the deterministic nature of the board rules. Interactive filtering/sorting across classes, grades, and verification categories in the same route.
+
+---
+
+## Known Limitations
+
+- None — all board rules and edge cases are covered. The only constraint is dataset size in memory (tested to 80+ students; scales linearly).
+
+---
+
+## Project Structure
+
+```
+src/lib/gpaEngine.ts        # core engine (R-10..R-29)
+src/lib/defaultDataset.json # 80 students, 2 classes
+src/lib/dataset.ts          # typed re-export
+src/routes/index.tsx        # Results / Trace / Checking Lists / Hard Edges
+src/routes/__root.tsx       # layout (no Convex)
+src/components/ui/*         # shadcn + Base UI
 ```
 
-The build output is a self-contained Node server. To deploy, push the `dist/` directory to your host (Render, Fly.io, your own VPS, etc.) and run the server command above.
+## Team
 
-For host-specific presets (Vercel, Netlify, Cloudflare, AWS Lambda, etc.) and tuning, see https://v3.nitro.build/deploy.
+- **Junaid Hossain** (@junaid-h0ssa) — GPA engine, trace viewer, checking lists, TanStack Start UI
+- **Punam Chakraborty** (@punammomi)
 
+## AI Tools
 
-## Setting up Convex
-
-- Set the `VITE_CONVEX_URL` and `CONVEX_DEPLOYMENT` environment variables in your `.env.local`. (Or run `bunx --bun convex init` to set them automatically.)
-- Run `bunx --bun convex dev` to start the Convex server.
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+Antigravity CLI, Opencode — code generation and rule verification; output verified via `npx tsx` against public fixture and manual R-10..R-29 checks.

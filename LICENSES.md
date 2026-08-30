@@ -1,79 +1,48 @@
-# Licenses
+# Third-Party Material and AI Disclosure
 
-This file lists every framework, library, starter/template, UI kit, font, icon and asset used in **LSH26-T012-P08** and their licenses. All code is used under its respective open-source license.
+List material frameworks, libraries, starters, templates, UI kits, fonts, icons and assets used in this repository.
 
-> Evaluation manifest references this file via `licenses_file: LICENSES.md`. No vendored copies are redistributed beyond `node_modules`.
-
-## 1. Starter / Template
-
-| Name | Version | License | Source |
+| Name | Version or source URL | Licence | Used for |
 |---|---|---|---|
-| TanStack Start starter (`create-tsrouter` / `file-router` preset) | — | **MIT** | https://github.com/TanStack/router |
+| TanStack Start starter (file-router preset) | https://github.com/TanStack/router | MIT | Project starter / file-router scaffold |
+| React | `19.2.0` (package.json) | MIT | Frontend framework |
+| React DOM | `19.2.0` | MIT | React rendering |
+| TanStack Router | `latest` | MIT | File-based routing |
+| TanStack Start (`@tanstack/react-start`) | `latest` | MIT | SSR / Start framework |
+| TanStack Router CLI (`@tanstack/router-cli`) | `^1.132.0` | MIT | Route generation (`tsr generate`) |
+| TanStack Devtools (`@tanstack/devtools-vite`, `@tanstack/react-devtools`, `@tanstack/react-router-devtools`) | `latest` | MIT | Devtools |
+| Vite | `^8.0.0` | MIT | Build tool |
+| @vitejs/plugin-react | `^6.0.1` | MIT | Vite React plugin |
+| Nitro | `3.0.260610-beta` | MIT | Server adapter / build |
+| Tailwind CSS | `^4.1.18` | MIT | Styling |
+| @tailwindcss/vite | `^4.1.18` | MIT | Tailwind Vite plugin |
+| TypeScript | `^6.0.2` | Apache-2.0 | Type checking |
+| @rolldown/plugin-babel | `^0.2.3` | MIT | Build plugin |
+| babel-plugin-react-compiler | `^1.0.0` | MIT | React Compiler |
+| shadcn/ui (CLI `shadcn` + generated `src/components/ui/*`) | `^4.19.0` — https://github.com/shadcn-ui/ui | MIT | UI kit / components |
+| Base UI React (`@base-ui/react`) | `^1.7.0` | MIT | Headless UI primitives (Button etc.) |
+| class-variance-authority | `^0.7.1` | Apache-2.0 | Variant styling |
+| clsx | `^2.1.1` | MIT | Class concatenation |
+| tailwind-merge | `^3.6.0` | MIT | Tailwind class merging |
+| tw-animate-css | `^1.4.0` | MIT | Animation utilities |
+| Biome (`@biomejs/biome`) | `2.4.5` | MIT + Apache-2.0 (dual) | Lint / format |
+| @types/node | `^22.10.2` | MIT | Type definitions |
+| @types/react | `^19.2.0` | MIT | Type definitions |
+| @types/react-dom | `^19.2.0` | MIT | Type definitions |
+| Inter Variable (`@fontsource-variable/inter`) | `^5.3.0` — https://github.com/fontsource/font-files | SIL OFL 1.1 (font) + MIT (package) | Body font |
+| Instrument Sans Variable (`@fontsource-variable/instrument-sans`) | `^5.3.0` | SIL OFL 1.1 (font) + MIT (package) | Heading font |
+| Lucide React (`lucide-react`) | `^0.577.0` — https://github.com/lucide-icons/lucide | ISC (MIT-compatible) | Icons |
+| P08_school_results_public.json | Board-provided fixture | Board-provided for evaluation | Sample input via Upload JSON |
+| src/lib/defaultDataset.json | Generated for this project | Original work | 80-student default dataset |
 
-## 2. Frameworks & Build
+## AI tools
 
-| Name | Version (package.json) | License | Source |
-|---|---|---|---|
-| React | `^19.2.0` | **MIT** | https://github.com/facebook/react |
-| React DOM | `^19.2.0` | **MIT** | https://github.com/facebook/react |
-| TanStack Router | `latest` | **MIT** | https://github.com/TanStack/router |
-| TanStack Start (`@tanstack/react-start`) | `latest` | **MIT** | https://github.com/TanStack/router |
-| TanStack Router CLI (`@tanstack/router-cli`) | `^1.132.0` | **MIT** | https://github.com/TanStack/router |
-| TanStack Devtools (`@tanstack/devtools-vite`, `@tanstack/react-devtools`, `@tanstack/react-router-devtools`) | `latest` | **MIT** | https://github.com/TanStack/devtools |
-| Vite | `^8.0.0` | **MIT** | https://github.com/vitejs/vite |
-| @vitejs/plugin-react | `^6.0.1` | **MIT** | https://github.com/vitejs/vite-plugin-react |
-| Nitro | `3.0.260610-beta` | **MIT** | https://github.com/nitrojs/nitro |
-| Tailwind CSS | `^4.1.18` | **MIT** | https://github.com/tailwindlabs/tailwindcss |
-| @tailwindcss/vite | `^4.1.18` | **MIT** | https://github.com/tailwindlabs/tailwindcss |
-| TypeScript | `^6.0.2` | **Apache-2.0** | https://github.com/microsoft/TypeScript |
-| @rolldown/plugin-babel | `^0.2.3` | **MIT** | https://github.com/rolldown/rolldown |
-| babel-plugin-react-compiler | `^1.0.0` | **MIT** | https://github.com/facebook/react |
+List each AI tool in `evaluation-manifest.json`, what it was used for and how the output was verified. Write `None` if no AI tool was used.
 
-## 3. UI Kit / Components / Utilities
-
-| Name | Version | License | Source |
-|---|---|---|---|
-| shadcn/ui (CLI `shadcn` `^4.19.0` + generated components in `src/components/ui/*`) | `^4.19.0` | **MIT** | https://github.com/shadcn-ui/ui |
-| Base UI React (`@base-ui/react`) | `^1.7.0` | **MIT** | https://github.com/mui/base-ui |
-| class-variance-authority | `^0.7.1` | **Apache-2.0** | https://github.com/joe-bell/cva |
-| clsx | `^2.1.1` | **MIT** | https://github.com/lukeed/clsx |
-| tailwind-merge | `^3.6.0` | **MIT** | https://github.com/dcastil/tailwind-merge |
-| tw-animate-css | `^1.4.0` | **MIT** | https://github.com/Wombosvideo/tw-animate-css |
-
-## 4. Lint / Format / Types
-
-| Name | Version | License | Source |
-|---|---|---|---|
-| Biome (`@biomejs/biome`) | `2.4.5` | **MIT** + **Apache-2.0** (dual) | https://github.com/biomejs/biome |
-| @types/node | `^22.10.2` | **MIT** | https://github.com/DefinitelyTyped/DefinitelyTyped |
-| @types/react | `^19.2.0` | **MIT** | https://github.com/DefinitelyTyped/DefinitelyTyped |
-| @types/react-dom | `^19.2.0` | **MIT** | https://github.com/DefinitelyTyped/DefinitelyTyped |
-
-## 5. Fonts
-
-| Name | Version | License | Source |
-|---|---|---|---|
-| Inter Variable (`@fontsource-variable/inter`) | `^5.3.0` | **SIL OFL 1.1** (font) + **MIT** (package) | https://github.com/fontsource/font-files — Inter by Rasmus Andersson |
-| Instrument Sans Variable (`@fontsource-variable/instrument-sans`) | `^5.3.0` | **SIL OFL 1.1** (font) + **MIT** (package) | https://github.com/fontsource/font-files |
-
-- Package wrappers are MIT (`fontsource`); the font files themselves are SIL Open Font License 1.1.
-
-## 6. Icons
-
-| Name | Version | License | Source |
-|---|---|---|---|
-| Lucide React (`lucide-react`) | `^0.577.0` | **ISC** (MIT-compatible) | https://github.com/lucide-icons/lucide |
-
-## 7. Assets / Data
-
-| Name | License | Notes |
+| Tool | What it assisted with | How the team verified its output |
 |---|---|---|
-| `P08_school_results_public.json` (80-student board fixture) | **Board-provided for evaluation** | Not redistributed under an OSS license; used as input fixture via Upload JSON |
-| `src/lib/defaultDataset.json` (80 students, 2 classes) | **Generated for this project** | Same schema as board fixture; no third-party license |
-| `src/styles.css`, `src/components/*` (app code) | **Private — project code** | Authored by team LSH26-T012 |
+| Antigravity CLI, Opencode (Muse Spark) | Code generation, architecture, UI scaffolding, rule verification against public fixture | Verified via `npx tsx` against `P08_school_results_public.json` and `src/lib/defaultDataset.json` (80 students, 5 high-avg fails, 10 practical fails) and manual rule-by-rule check of R-10, R-11, R-12, R-13, R-29; `npm run build` passes |
 
-## 8. Notes
+## Original-work statement
 
-- No Convex, no other backend SDKs remain (removed — see `package.json:17-35`). The app is fully client-side.
-- All licenses allow commercial use, modification and distribution with attribution. No GPL/AGPL copyleft components are included.
-- Full license texts are in each package's `LICENSE` file inside `node_modules/<package>/` after `bun install` / `npm install`.
+Everything not declared in this file or `EVENT.md` was created by the registered team during the event window.

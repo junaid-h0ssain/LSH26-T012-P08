@@ -14,41 +14,21 @@
   },
   "problem_solving_method": "Pure client-side deterministic GPA engine: src/lib/gpaEngine.ts implements R-10/R-11/R-12/R-13/R-29 exactly; React + TanStack Start renders results, per-student trace, and office checking lists; data from src/lib/defaultDataset.json and optional JSON upload.",
   "requirements": {
-    "R1_dataset_and_hard_edges": {
+    "R1": {
       "status": "complete",
-      "evidence": "AGENTS.md:5 item 1 — src/lib/defaultDataset.json:3-50 (9 subjects) + src/lib/defaultDataset.json:58-2120 (80 students 40+40) + src/routes/index.tsx:425-477 hard-edge panels: 5 high-avg fail, 10 practical fail (S011 PHY Th60/Pr5), 25 optional ≤2.0, 2 absent (S032/S045)"
+      "evidence": "src/lib/defaultDataset.json:3-50 (9 subjects, 6 compulsory) + src/lib/defaultDataset.json:58-2120 (80 students 40+40) + src/routes/index.tsx:425-477 Hard Edges tab: 5 high-avg fail, 10 practical fail (S011 PHY Th60/Pr5), 25 optional ≤2.0, 2 absent (S032/S045) — AGENTS.md:5 + R-11/R-12"
     },
-    "R2_grade_points_GPA_letter": {
+    "R2": {
       "status": "complete",
-      "evidence": "AGENTS.md:7 item 2 — src/lib/gpaEngine.ts:75-83 + src/lib/gpaEngine.ts:95-103 + src/lib/gpaEngine.ts:105-502 evaluateStudent produces per-subject GP, final GPA and letter; shown src/routes/index.tsx:231-271"
+      "evidence": "src/lib/gpaEngine.ts:75-83 getGradePointAndLetter + src/lib/gpaEngine.ts:95-103 getLetterFromGpa (R-10) + src/lib/gpaEngine.ts:105-502 evaluateStudent/evaluateCase grade point, final GPA and letter — shown src/routes/index.tsx:231-271 — AGENTS.md:7 + R-10/R-11/R-13"
     },
-    "R3_per_student_trace": {
+    "R3": {
       "status": "complete",
-      "evidence": "AGENTS.md:9 item 3 — src/routes/index.tsx:274-376 Trace table (mark/GP/rule) + src/routes/index.tsx:303-316 high-avg fail shows causing subject + uncancelledGpa + src/lib/gpaEngine.ts:31 ruleApplied"
+      "evidence": "src/routes/index.tsx:274-376 Trace tab (mark/GP/rule per subject, R-11/R-12 cites) + src/routes/index.tsx:303-316 high-avg fail shows causing subject + uncancelledGpa + GPA resolution src/routes/index.tsx:348-374 — AGENTS.md:9"
     },
-    "R4_checking_lists": {
+    "R4": {
       "status": "complete",
-      "evidence": "AGENTS.md:11 item 4 — src/routes/index.tsx:380-422 Office tabs All/Optional≤2.0/Practical/Absent derived from src/lib/gpaEngine.ts:489-492"
-    },
-    "R-10_letter_grade": {
-      "status": "complete",
-      "evidence": "src/lib/gpaEngine.ts:95-103 getLetterFromGpa implements AGENTS.md:18 exactly: A+ =5.00, A 4.00-4.99, A- 3.50-3.99, B 3.00-3.49, C 2.00-2.99, D 1.00-1.99, F fail"
-    },
-    "R-11_practical_theory_pass": {
-      "status": "complete",
-      "evidence": "src/lib/gpaEngine.ts:153-278 practical subjects: Theory 25/75 and Practical 8/25 checked separately; any fail → GP 0.0; ruleApplied strings cite (R-11) e.g. S011 PHY Th60 pass Pr5 fail → Practical fail"
-    },
-    "R-12_absent": {
-      "status": "complete",
-      "evidence": "src/lib/gpaEngine.ts:130-146 compulsory AB → GP 0, hasCompulsoryFail=true, overall F + src/lib/gpaEngine.ts:332-348 optional AB → contributes 0, hasAbsentFlag=true, flagged on checking list per AGENTS.md:15"
-    },
-    "R-13_GPA_formula_and_compulsory_fail": {
-      "status": "complete",
-      "evidence": "src/lib/gpaEngine.ts:452-469 GPA=(sumCompulsory + max(0,optGP-2))/6 capped 5.00 shown 2dp + compulsory fail → finalGpa 0.00 F with uncancelledGpa visible visible ( (/lib/gpaEngine.ts:436 transition) + src/routes/index.tsx:260-262 strikethrough uncancelled + src/routes/index.tsx:350-362 GPA resolution trace"
-    },
-    "R-29_checking_list_definitions": {
-      "status": "complete",
-      "evidence": "src/lib/gpaEngine.ts:489-492 flags: optionalRuleAffected optGP≤2.0 (absent counts), practicalFail pr<8 any subject, absent any AB; student can be on >1 list + src/routes/index.tsx:70-76 + 388-394 tab counts per AGENTS.md:19"
+      "evidence": "src/routes/index.tsx:380-422 Office Checking Lists (All/Optional≤2.0/Practical/Absent from src/lib/gpaEngine.ts:489-492, R-29, overlapping lists handled) — AGENTS.md:11"
     }
   },
   "team_members": [
@@ -65,10 +45,10 @@
     {
       "registered_name": "Punam Chakraborty",
       "github_username": "punammomi",
-      "major_contribution": "Brief description of personal contribution",
+      "major_contribution": "UI testing and verification, dataset hard-edge validation",
       "evidence_paths_or_commits": [
-        "src/example-file",
-        "<commit SHA if helpful>"
+        "src/lib/defaultDataset.json",
+        "src/routes/index.tsx"
       ]
     }
   ],

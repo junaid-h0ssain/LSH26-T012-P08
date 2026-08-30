@@ -1,102 +1,114 @@
-# LSH26-T012-P08 — School Result Processing and GPA Engine
+# lsh26-t012-p08
 
-| Field | Value |
-|---|---|
-| **Team ID** | `LSH26-T012` |
-| **Problem ID** | `P08` |
-| **Live URL** | https://results-navy.vercel.app/ |
-| **Event Code** | `LSH26-8490-C900` |
-| **Repo** | `lsh26-t012-p08` |
+Solution for **LofiStack Hackathon 2026 — P08 — School Result Processing and GPA Engine**
 
-Deterministic, fully client-side GPA engine that implements the board rules exactly (R-10 / R-11 / R-12 / R-13 / R-29), with per-student trace and office checking lists.
+## Project information
 
----
+- **Team:** `LSH26-T012`
+- **Team ID:** `LSH26-T012`
+- **Problem:** `P08 — School Result Processing and GPA Engine`
+- **Live application:** <https://results-navy.vercel.app/>
+- **Demo video:** _Optional — no video submitted (max 3 min if added later)_
 
-## Setup and Run
+> Judges will evaluate only the exact commit SHA entered in the Final Submission Form.
 
-**Prerequisites:** Node 20+ or Bun 1.1+, no env vars required (Convex removed — pure client-side).
+## Solution summary
+
+Client-side deterministic GPA engine that implements the board rules exactly (R-10 letter grade, R-11 theory 25/75 + practical 8/25, R-12 absent `AB`, R-13 GPA formula capped 5.00, R-29 checking lists). 80 students across Class 9 and Class 10 with all hard-edge cases, per-student trace showing mark used / grade point / governing rule, and an office checking list for hand verification before publishing.
+
+## Requirements
+
+| Requirement | Status | Where to verify |
+|---|---|---|
+| R1 — Create ≥60 students across 2 classes, 6 compulsory + 1 optional per student, practical splits, ≥8 hard-edge students (failed with strong avg, practical fail with passing theory, optional ≤2.0, absent) | Complete | `src/lib/defaultDataset.json:3-50` subjects + `src/lib/defaultDataset.json:58-2120` 80 students (40 Class 9 + 40 Class 10) · Hard Edges tab `src/routes/index.tsx:425-477` (5 high-avg fail S004/S005/S011/S064/S070, 10 practical fail e.g. S011 PHY Th60/Pr5, 25 optional ≤2.0, 2 absent S032/S045) |
+| R2 — Work out result: grade point per subject, final GPA and letter grade | Complete | `src/lib/gpaEngine.ts:75-83` `getGradePointAndLetter` + `src/lib/gpaEngine.ts:95-103` `getLetterFromGpa` (R-10) + `src/lib/gpaEngine.ts:105-502` `evaluateStudent`/`evaluateCase` · Results table `src/routes/index.tsx:231-271` |
+| R3 — Per-student trace: mark used, grade point, governing rule; high-avg failure shows causing subject | Complete | Trace tab `src/routes/index.tsx:274-376` — Subject/Type/Marks/Total/GP/Grade/Rule columns (`SubjectTrace.ruleApplied:31` cites R-11/R-12) + failure banner `src/routes/index.tsx:303-316` + GPA resolution `src/routes/index.tsx:348-374` showing `sumComp + max(0,opt-2)/6` |
+| R4 — Office checking list: every student affected by optional rule, practical fail, or absent | Complete | Checking Lists tab `src/routes/index.tsx:380-422` with sub-tabs All / Optional ≤2.0 / Practical fail / Absent derived from `src/lib/gpaEngine.ts:489-492` (R-29) |
+
+Clarifications implemented: R-11 practical `src/lib/gpaEngine.ts:153-278`, R-12 absent `src/lib/gpaEngine.ts:130-146,332-348`, R-13 GPA + fail override `src/lib/gpaEngine.ts:452-469`, R-10 letter `src/lib/gpaEngine.ts:95-103`, R-29 lists `src/lib/gpaEngine.ts:489-492`.
+
+## How to test the application
+
+1. Open the live application: <https://results-navy.vercel.app/>
+2. View **Results & GPA** tab — see compulsory sum, optional contribution, uncancelled vs final GPA, grade badge; use Search and Class/Grade filters.
+3. Click any row → **Trace** tab — verify per-subject marks (Th/Pr split), total, GP, grade, and rule string `(R-11)`/`(R-12)`; check GPA Resolution box for `(sumComp + max(0,opt-2))/6`.
+4. Open **Checking Lists** → verify All / Optional ≤2.0 / Practical fail / Absent tabs; open **Hard Edges** → verify ≥8 students across 4 categories; click any to jump to Trace.
+
+### Test or sample data
+
+- **Bundled default:** `src/lib/defaultDataset.json` (80 students) loads automatically on first load.
+- **Published fixture:** Click **Upload JSON** in header → select `P08_school_results_public.json` (or any file with `{cases:[CaseData]}` or bare `CaseData` shape). Parsed in `src/routes/index.tsx:90-110`.
+- **Reset:** Click **Reset** in header to restore the bundled dataset.
+
+## Run locally
+
+### Requirements
+
+- Node 20+ or Bun 1.1+
+- No database, no env vars required (fully client-side; Convex removed)
+
+### Setup
 
 ```bash
-# 1. Install
-bun install        # or: npm install
-
-# 2. Dev server (http://localhost:3000)
-bun run dev        # or: npm run dev
-
-# 3. Production build + preview
-bun run build
-bun run preview    # or: npm run preview
-# Nitro output: node .output/server/index.mjs
-
-# 4. Lint / format
-bun run check      # biome check
-bun run lint
-bun run format
+git clone https://github.com/junaid-h0ssa/lsh26-t012-p08.git
+cd lsh26-t012-p08
+bun install          # or: npm install
+# no .env required — app is fully client-side
+bun run dev          # or: npm run dev  → http://localhost:3000
 ```
 
-**Load data:**
+```bash
+bun run build        # production build (Nitro)
+bun run preview      # preview build
+# or: node .output/server/index.mjs
+```
 
-- Bundled default: `src/lib/defaultDataset.json` (80 students) loads automatically.
-- Published fixture: click **Upload JSON** → select `P08_school_results_public.json` (any `cases[0]` or bare `CaseData` shape works).
-- Reset: click **Reset** in header.
+Do not include real passwords, tokens or API keys. List only variable names in `.env.example`.
 
----
+## Problem-solving approach
 
-## Proof Each Requirement Is Met
+- **Understanding:** Parsed AGENTS.md + `P08_school_results_public.json:4` format_note — practical subjects carry `theory 0..75` + `practical 0..25`, `AB` means absent, 6 compulsory + 1 optional per student.
+- **Chosen solution:** Pure client-side deterministic engine (`evaluateStudent` pure function) that enforces R-11 (both parts must pass), R-12 (AB handling), R-13 (GPA formula + fail override), R-10 (letter), R-29 (checking lists) exactly; UI only renders results.
+- **Most important decision:** Isolate all board rules in `src/lib/gpaEngine.ts` for 100% testability; remove Convex/backend to keep deployment static and deterministic.
+- **Testing:** `npx tsx` against `P08_school_results_public.json` + `defaultDataset.json` (verified S004 32→F, S005 theory fail, S011 practical fail with passing theory, S032/S045 absent, high-avg 5 cases); manual R-10..R-29 trace check; `npm run build` passes.
 
-### The four required items (AGENTS.md:5-11)
+## Technology used
 
-| # | Requirement (AGENTS.md) | Status | Evidence |
+- **Frontend:** React 19, TanStack Start + TanStack Router (file-router), Tailwind CSS 4, shadcn/ui + Base UI React, Lucide icons, Fontsource Inter/Instrument Sans
+- **Backend:** None (fully client-side)
+- **Database:** None (in-memory `CaseData` + JSON upload)
+- **Deployment:** Vercel (Nitro server, `vite build`)
+- **Other material tools:** Vite 8, Biome 2.4.5, TypeScript 6, TanStack Devtools
+
+See [`LICENSES.md`](LICENSES.md) for third-party materials.
+
+## Team contributions
+
+| Registered member | GitHub username | Major contribution | Evidence |
 |---|---|---|---|
-| **1** | **≥60 students across 2 classes, 6 compulsory + 1 optional, practical splits, ≥8 hard-edge students** (failed with strong avg, practical fail with passing theory, optional ≤2.0, absent) | ✅ | `src/lib/defaultDataset.json:3-50` — 9 subjects (BAN/ENG/MAT non-practical, PHY/CHE/BIO/HMT/AGR practical, REL non-practical), compulsory `[BAN,ENG,MAT,PHY,CHE,BIO]`. `src/lib/defaultDataset.json:58-2120` — **80 students** (40 Class 9 + 40 Class 10), each 7 marks. Hard edges verified via `src/lib/gpaEngine.ts:489-493`: High-avg fail 5 (`S004 4.67`, `S005 4.67`, `S011 3.83`, `S064 3.08`, `S070 3.25`), Practical fail 10 (`S002,S010,S011,S012…`), Optional ≤2.0 25 students, Absent 2 (`S032 BIO AB`, `S045 REL AB`). Shown in `src/routes/index.tsx:425-477` Hard Edges tab. |
-| **2** | **Grade point per subject, final GPA and letter grade per student** | ✅ | `src/lib/gpaEngine.ts:75-83` `getGradePointAndLetter`, `src/lib/gpaEngine.ts:95-103` `getLetterFromGpa` (R-10), `src/lib/gpaEngine.ts:105-502` `evaluateStudent`/`evaluateCase` — produces `subjectTraces[].gradePoint`, `finalGpa`, `finalGrade` for every student. Rendered in Results table `src/routes/index.tsx:231-271`. |
-| **3** | **Per-student trace: mark used, grade point, governing rule; high-avg failure must show causing subject** | ✅ | `src/routes/index.tsx:274-376` Trace tab: columns Subject/Type/Marks/Total/GP/Grade/Rule (`SubjectTrace.ruleApplied:31` cites `R-11`/`R-12`). Failure banner `src/routes/index.tsx:303-316` lists `failedCompulsorySubjects` + strikethrough `uncancelledGpa:260-262` + step-by-step GPA resolution `src/routes/index.tsx:348-374` showing `sumComp + max(0,opt-2) /6`. |
-| **4** | **Office checking list: every student affected by optional rule, practical fail, or absent** | ✅ | `src/routes/index.tsx:380-422` Checking Lists tab with sub-tabs All / Optional ≤2.0 / Practical fail / Absent. Derived from `src/lib/gpaEngine.ts:489-492` flags. Handles overlapping lists (R-29). `src/routes/index.tsx:70-76` counts. |
+| Junaid Hossain | `junaid-h0ssa` | GPA engine, trace viewer, checking lists, TanStack Start UI | `src/lib/gpaEngine.ts`, `src/routes/index.tsx`, `src/lib/dataset.ts` |
+| Punam Chakraborty | `punammomi` | UI testing and verification, dataset hard-edge validation | Manual verification of hard-edge cases, `src/lib/defaultDataset.json` |
 
-### Clarifications — judges mark by these (AGENTS.md:12-19)
+Commit count alone does not represent contribution.
 
-| Rule | Description | Evidence |
+## AI usage
+
+| Tool | What it assisted with | How the team verified its output |
 |---|---|---|
-| **R-11** | Theory 75 pass 25, Practical 25 pass 8; failing either → GP 0 | `src/lib/gpaEngine.ts:153-278` — separate `th<25` / `pr<8` branches; e.g. `S011` PHY `Th60/75 pass + Pr5/25 fail → GP 0 (R-11)` at `src/lib/gpaEngine.ts:210-233` |
-| **R-12** | Absent compulsory: `AB`, GP 0, overall `F`. Absent optional: contributes `0`, appears on checking list | `src/lib/gpaEngine.ts:130-146` compulsory AB, `src/lib/gpaEngine.ts:332-348` optional AB → `hasAbsentFlag` |
-| **R-13** | GPA = `(sum compulsory GP + max(0, optGP-2))/6` capped `5.00` 2dp; any compulsory fail → `0.00 F`, uncancelled visible | `src/lib/gpaEngine.ts:452-469` + `src/routes/index.tsx:350-373` resolution trace; high-avg fails show `uncancelledGpa` before override |
-| **R-10** | Letter from final GPA: `A+=5.00, A 4.00-4.99, A- 3.50-3.99, B 3.00-3.49, C 2.00-2.99, D 1.00-1.99, F fail` | `src/lib/gpaEngine.ts:95-103` |
-| **R-29** | Checking lists: optional `GP≤2.0` (AB counts), practical `pr<8` any subject, absent `AB` any subject; student can be on multiple | `src/lib/gpaEngine.ts:489-492` + `src/routes/index.tsx:388-394` |
+| Antigravity CLI, Opencode (Muse Spark) | Code generation, architecture, UI scaffolding, rule verification | Verified via `npx tsx` against `P08_school_results_public.json` and `defaultDataset.json` (80 students, 5 high-avg fails, 10 practical fails) and manual rule-by-rule check of R-10, R-11, R-12, R-13, R-29; `npm run build` |
 
-All rules verified against `P08_school_results_public.json` via `npx tsx` (80 default + public fixture, `S005` theory fail, `S011` practical fail, `S032`/`S045` absent, `S004` `32/100→F` edge).
+## Major design decisions
 
----
+- **Decision:** Engine isolated in `src/lib/gpaEngine.ts` (`evaluateStudent`/`evaluateCase` pure functions) — *Reason:* exact board-rule compliance and instant unit-testability without UI.
+- **Decision:** Rich `SubjectTrace` with `ruleApplied` citing `R-*` and `uncancelledGpa` + `failedCompulsorySubjects` — *Reason:* satisfies R3 trace + R-13 high-average failure visibility.
+- **Decision:** Fully client-side with JSON upload and no Convex/backend — *Reason:* deterministic, zero-infra, static deployable to Vercel, matches board calculation nature.
 
-## Major Decisions
+## Known limitations
 
-1. **Engine isolated in `src/lib/gpaEngine.ts`** — pure functions `evaluateStudent`/`evaluateCase`/`getGradePointAndLetter`/`getLetterFromGpa` with no side effects, 100% testable and board-rule compliant. UI never computes GPA itself.
-2. **Rich trace structure** — `SubjectTrace` captures `theoryMark/practicalMark/totalMark`, `gradePoint`, `letterGrade`, `failureReason` (`ABSENT`/`THEORY_FAIL`/`PRACTICAL_FAIL`/`TOTAL_FAIL`) and `ruleApplied` string citing `R-*`, plus `uncancelledGpa`/`failedCompulsorySubjects` for high-average failures.
-3. **Fully client-side (Convex removed)** — no backend/DB; data is `src/lib/defaultDataset.json` + JSON upload parsed in `src/routes/index.tsx:90-110`. Keeps deployment to static Vercel possible and matches the deterministic nature of the board rules. Interactive filtering/sorting across classes, grades, and verification categories in the same route.
+- None — all board rules and hard-edge categories are covered. Dataset size limited only by browser memory (tested to 80 students; scales linearly).
 
----
+## Repository records
 
-## Known Limitations
-
-- None — all board rules and edge cases are covered. The only constraint is dataset size in memory (tested to 80+ students; scales linearly).
-
----
-
-## Project Structure
-
-```
-src/lib/gpaEngine.ts        # core engine (R-10..R-29)
-src/lib/defaultDataset.json # 80 students, 2 classes
-src/lib/dataset.ts          # typed re-export
-src/routes/index.tsx        # Results / Trace / Checking Lists / Hard Edges
-src/routes/__root.tsx       # layout (no Convex)
-src/components/ui/*         # shadcn + Base UI
-```
-
-## Team
-
-- **Junaid Hossain** (@junaid-h0ssa) — GPA engine, trace viewer, checking lists, TanStack Start UI
-- **Punam Chakraborty** (@punammomi)
-
-## AI Tools
-
-Antigravity CLI, Opencode — code generation and rule verification; output verified via `npx tsx` against public fixture and manual R-10..R-29 checks.
+- [`EVENT.md`](EVENT.md) — event start code and pre-event-material declaration
+- [`evaluation-manifest.json`](evaluation-manifest.json) — structured judging evidence
+- [`LICENSES.md`](LICENSES.md) — frameworks, libraries, templates and assets

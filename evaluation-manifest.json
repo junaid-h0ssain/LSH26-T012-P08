@@ -12,7 +12,7 @@
     "method": "file upload and bundled default dataset",
     "reset_instructions": "Click the 'Reset Default' button in the top navigation bar or upload the JSON fixture P08_school_results_public.json directly via the 'Upload JSON' button."
   },
-  "problem_solving_method": "Deterministic GPA rule engine with per-student trace logs and office checking lists, built using React, TanStack Start, and Convex for state persistence and real-time reactive sync.",
+  "problem_solving_method": "Deterministic GPA rule engine with per-student trace logs and office checking lists, built using React and TanStack Start with fully client-side evaluation (no backend).",
   "requirements": {
     "R1": {
       "status": "complete",
@@ -39,7 +39,7 @@
       "evidence_paths_or_commits": [
         "src/lib/gpaEngine.ts",
         "src/routes/index.tsx",
-        "convex/schema.ts"
+        "src/lib/dataset.ts"
       ]
     },
     {
